@@ -65,9 +65,8 @@ def iter_box(nx,ny,nz,spacing):
             yield (x,y,dz/2), (0,0,-1)
 
 
-def build_detector():
+def build_detector(size=100):
     """Returns a cubic detector made of cubic photodetectors."""
-    size = 100
     glass_thickness = 10
 
     nx, ny, nz = 20, 20, 20

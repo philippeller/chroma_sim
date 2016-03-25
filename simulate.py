@@ -7,9 +7,9 @@ from chroma.generator import vertex
 from chroma.camera import Camera
 import matplotlib.pyplot as plt
 
-from geometry_cube import build_detector
+from geometry_cylinder import build_detector
 
-g = build_detector()
+g = build_detector(1000)
 g.flatten()
 g.bvh = load_bvh(g)
 #view(g)
