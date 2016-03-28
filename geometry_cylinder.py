@@ -23,8 +23,8 @@ def build_pd(size, glass_thickness):
     # the photosensitive surface on these triangles
     # do this by seeing which triangle centers are at the maximum z
     # coordinate
-    z = inside_mesh.get_triangle_centers()[:,2]
-    top = z == max(z)
+    #z = inside_mesh.get_triangle_centers()[:,2]
+    #top = z == max(z)
 
     # see np.where() documentation
     # Here we make the photosensitive surface along the top face of the inside
@@ -45,7 +45,9 @@ def build_detector(size=100):
     glass_thickness = 10
 
     d.add_pmt(build_pd(size,glass_thickness),
-                    displacement=(0,0,0),channel_id=1)
+                    displacement=(-30,0,0),channel_id=1)
+    d.add_pmt(build_pd(size,glass_thickness),
+                    displacement=(30,0,0),channel_id=1)
 
     world = Solid(make.box(10000,10000,10000),ice,vacuum,
                   color=0x33ffffff)
