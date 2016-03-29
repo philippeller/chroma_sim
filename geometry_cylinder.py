@@ -6,10 +6,12 @@ from chroma.demo.optics import glass, ice, water,vacuum, r7081hqe_photocathode
 from chroma.demo.optics import black_surface
 import numpy as np
 
-def build_pd(size, glass_thickness):
+def build_dom():
     """Returns a simple photodetector Solid. The photodetector is a sphere of
     size `size` constructed out of a glass envelope with a photosensitive
-    face on the inside of the glass envelope facing up."""
+    face on the inside of the glass envelope."""
+    glass_thickness = 10 #mm
+    size = 100 #mm
     # outside of the glass envelope
     outside_mesh = make.sphere(size)
     # inside of the glass envelope
@@ -18,17 +20,6 @@ def build_pd(size, glass_thickness):
     # outside solid with ice on the outside, and glass on the inside
     outside_solid = Solid(outside_mesh,glass,ice)    
 
-    # now we need to determine the triangles which make up
-    # the top face of the inside mesh, because we are going to place
-    # the photosensitive surface on these triangles
-    # do this by seeing which triangle centers are at the maximum z
-    # coordinate
-    #z = inside_mesh.get_triangle_centers()[:,2]
-    #top = z == max(z)
-
-    # see np.where() documentation
-    # Here we make the photosensitive surface along the top face of the inside
-    # mesh. The rest of the inside mesh is perfectly absorbing.
     inside_surface = r7081hqe_photocathode
     inside_color = 0x00ff00
 
@@ -39,18 +30,23 @@ def build_pd(size, glass_thickness):
     # you can add solids and meshes!
     return outside_solid + inside_solid
 
-def build_detector(size=100):
+def build_detector():
     """Returns a cubic detector made of cubic photodetectors."""
+    world_size = 1000000 # 1 km
+
     d = Detector(ice)
-    glass_thickness = 10
 
-    d.add_pmt(build_pd(size,glass_thickness),
-                    displacement=(-30,0,0),channel_id=1)
-    d.add_pmt(build_pd(size,glass_thickness),
-                    displacement=(30,0,0),channel_id=1)
+    #add DOMs at locations x,y,z
+    
+    channel_id = 0
 
-    world = Solid(make.box(10000,10000,10000),ice,vacuum,
-                  color=0x33ffffff)
+    for x in np.arange(-500000,500001,100000):
+        for y in np.arange(-500000,500001,100000):
+            for z in np.arange(-500000,500001,100000):
+                d.add_pmt(build_dom(),displacement=(x,y,z),channel_id=channel_id)
+                channel_id += 1
+
+    world = Solid(make.box(world_size,world_size,world_size),ice,vacuum,color=0x33ffffff)
     d.add_solid(world)
 
     return d

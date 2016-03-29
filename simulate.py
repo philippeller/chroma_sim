@@ -10,34 +10,23 @@ import sys
 
 from geometry_cylinder import build_detector
 
-g = build_detector(10000)
+g = build_detector()
 g.flatten()
 g.bvh = load_bvh(g)
 #view(g)
 
-#print g.solids[0].mesh.triangles
 
-#sys.exit()
+ys.exit()
 
 sim = Simulation(g)
 
-# write it to a root file
-#from chroma.io.root import RootWriter
-#f = RootWriter('test.root')
-
-# simulate some electrons!
 n=1
-# why does that not work..?
-gun = vertex.particle_gun(particle_name_iter=['mu-']*n,
-                          #vertex.constant((0,10000,10000)),
-                          #vertex.isotropic(),
-                          #vertex.flat(500,1000))
-                          pos_iter=[(0,10000,10000)]*n,
-                          dir_iter=[(0,-1,-1)]*n,
-                          ke_iter=[1000]*n,
-                          t0_iter=[0]*n)
+gun = vertex.particle_gun(['mu-']*n,
+                          vertex.constant((0,10000,10000)),
+                          vertex.constant([1,0,-1]),
+                          vertex.constant(1000),
+                          vertex.constant(0))
 
-#gun = vertex.constant_particle_gun(['mu-']*n, (0,10000,10000), (0,-1,-1), 1000)
 i = 0
 for ev in sim.simulate(gun,keep_detected_photons=True,
                        max_steps=100):
@@ -58,7 +47,8 @@ for ev in sim.simulate(gun,keep_detected_photons=True,
             pmt_hits += 1
     print pmt_hits, ' out of ', len(photons.last_hit_triangles)
 
-    #f.write_event(ev)                      
+    #channel
+    g.solid_id_to_channel_index[g.solid_id[int(t_id.get())]]
 
     #detected = (ev.photons_end.flags & (0x1 << 2)).astype(bool)
 
@@ -66,5 +56,3 @@ for ev in sim.simulate(gun,keep_detected_photons=True,
     #plt.xlabel('Time (ns)')
     #plt.title('Photon Hit Times')
     #plt.show()
-
-#f.close()
